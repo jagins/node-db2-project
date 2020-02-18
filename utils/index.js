@@ -1,3 +1,26 @@
+const database = require('../data/dbConfig');
+
+function validateID(req, res, next)
+{
+    database('car-dealer').where({id: req.params.id}).first()
+    .then(car =>
+    {
+        if(car)
+        {
+            req.car = car;
+            next();
+        }
+        else
+        {
+            res.status(404).json({message: 'The Car with that ID does not exist'});
+        }
+    })
+    .catch(error =>
+    {
+        res.status(500).json({error: `Couldn't retrieve Cars from the database`});
+    })
+}
+
 function validateCar(req, res, next)
 {
     if(req.body.constructor === Object && Object.keys(req.body).length === 0)
@@ -14,4 +37,4 @@ function validateCar(req, res, next)
     }
 }
 
-module.exports = {validateCar};
+module.exports = {validateID, validateCar};

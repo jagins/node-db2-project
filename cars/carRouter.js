@@ -1,6 +1,6 @@
 const express = require('express');
 const database = require('../data/dbConfig');
-const {validateCar} = require('../utils');
+const {validateID, validateCar} = require('../utils');
 const router = express.Router();
 
 router.get('/', (req, res) =>
@@ -16,24 +16,9 @@ router.get('/', (req, res) =>
     })
 })
 
-router.get('/:id', (req, res) =>
+router.get('/:id', validateID, (req, res) =>
 {
-    database('car-dealer').where({id: req.params.id}).first()
-    .then(car =>
-    {
-        if(car)
-        {
-            res.status(200).json(car);
-        }
-        else
-        {
-            res.status(404).json({message: 'The Car with that ID does not exist'});
-        }
-    })
-    .catch(error =>
-    {
-        res.status(500).json({error: `Couldn't retrieve Cars from the database`});
-    })
+   res.status(200).json(req.car);
 })
 
 router.post('/', validateCar, (req, res) =>
