@@ -51,4 +51,34 @@ router.post('/', validateCar, (req, res) =>
     })
 })
 
+router.put('/:id', validateID, (req, res) =>
+{
+    const updateCar = {
+        VIN: req.body.VIN ? req.body.VIN : req.car.VIN,
+        MAKE: req.body.MAKE ? req.body.MAKE : req.car.MAKE,
+        MODEL: req.body.MODEL ? req.body.MODEL : req.car.MODEL,
+        MILEAGE: req.body.MILEAGE ? req.body.MILEAGE : req.car.MILEAGE,
+        TRANSMISSION: req.body.TRANSMISSION ? req.body.TRANSMISSION : req.car.TRANSMISSION,
+        STATUS: req.body.STATUS ? req.body.STATUS : req.car.STATUS
+    };
+
+    database('car-dealer').where({id: req.car.id}).update(updateCar)
+    .then(count =>
+    {
+        database('car-dealer').where({id: req.car.id}).first()
+        .then(updatedCar =>
+        {
+            res.status(200).json(updatedCar);
+        })
+        .catch(error =>
+        {
+            res.status(500).json({error: 'Error retrieving the Car'});
+        })
+    })
+    .catch(error =>
+    {
+        res.status(500).json({error: 'Error updating the Car'});
+    })
+})
+
 module.exports = router;
