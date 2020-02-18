@@ -81,4 +81,25 @@ router.put('/:id', validateID, (req, res) =>
     })
 })
 
+router.delete('/:id', validateID, (req, res) =>
+{
+    database('car-dealer').where({id: req.car.id}).del()
+    .then(count =>
+    {
+        database('car-dealer')
+        .then(cars =>
+        {
+            res.status(200).json(cars);
+        })
+        .catch(error => 
+        {
+            res.status(500).json({error: 'Could not retrieve Cars from the database'});
+        })
+    })
+    .catch(error =>
+    {
+        res.status(500).json({error: 'Error trying to delete the Car'});
+    })
+})
+
 module.exports = router;
